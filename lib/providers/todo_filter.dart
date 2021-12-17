@@ -19,8 +19,12 @@ class TodoFilterState extends Equatable {
   @override
   bool get stringify => true;
 
-  TodoFilterState copyWith({Filter? filter}) {
-    return TodoFilterState(filter: filter ?? this.filter);
+  TodoFilterState copyWith({
+    Filter? filter,
+  }) {
+    return TodoFilterState(
+      filter: filter ?? this.filter,
+    );
   }
 }
 
