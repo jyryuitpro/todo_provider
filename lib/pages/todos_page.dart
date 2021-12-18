@@ -32,6 +32,7 @@ class _TodosPageState extends State<TodosPage> {
                   height: 20.0,
                 ),
                 SearchAndFilterTodo(),
+                ShowTodos(),
               ],
             ),
           ),
@@ -150,5 +151,50 @@ class SearchAndFilterTodo extends StatelessWidget {
   Color textColor(BuildContext context, Filter filter) {
     final currentFilter = context.watch<TodoFilter>().state.filter;
     return currentFilter == filter ? Colors.blue : Colors.grey;
+  }
+}
+
+class ShowTodos extends StatelessWidget {
+  const ShowTodos({Key? key}) : super(key: key);
+
+  Widget showBackground(int direction) {
+    return Container(
+      margin: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      color: Colors.red,
+      alignment: direction == 0 ? Alignment.centerLeft : Alignment.centerRight,
+      child: Icon(
+        Icons.delete,
+        size: 30.0,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final todos = context.watch<FilteredTodos>().state.filteredTodos;
+
+    return ListView.separated(
+      primary: false,
+      shrinkWrap: true,
+      itemCount: todos.length,
+      separatorBuilder: (context, index) {
+        return Divider(
+          color: Colors.grey,
+        );
+      },
+      itemBuilder: (context, index) {
+        return Dismissible(
+          key: ValueKey(todos[index].id),
+          background: showBackground(0),
+          secondaryBackground: showBackground(1),
+          child: Text(
+            todos[index].desc,
+            style: TextStyle(fontSize: 20.0),
+          ),
+        );
+      },
+    );
   }
 }
