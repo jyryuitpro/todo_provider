@@ -5,6 +5,7 @@ import 'package:todo_provider/providers/active_todo_count.dart';
 import 'package:todo_provider/providers/providers.dart';
 import 'package:todo_provider/providers/todo_list.dart';
 import 'package:todo_provider/providers/todo_search.dart';
+import 'package:todo_provider/utils/debounce.dart';
 
 class TodosPage extends StatefulWidget {
   const TodosPage({Key? key}) : super(key: key);
@@ -83,7 +84,7 @@ class _CreateTodoState extends State<CreateTodo> {
   Widget build(BuildContext context) {
     return TextField(
       controller: newTodoController,
-      decoration: InputDecoration(hintText: 'What to do?'),
+      decoration: InputDecoration(labelText: 'What to do?'),
       onSubmitted: (String? todoDesc) {
         if (todoDesc != null && todoDesc.trim().isNotEmpty) {
           context.read<TodoList>().addTodo(todoDesc);
@@ -95,7 +96,9 @@ class _CreateTodoState extends State<CreateTodo> {
 }
 
 class SearchAndFilterTodo extends StatelessWidget {
-  const SearchAndFilterTodo({Key? key}) : super(key: key);
+  final debounce = Debounce(milliseconds: 1000);
+
+  SearchAndFilterTodo({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +113,9 @@ class SearchAndFilterTodo extends StatelessWidget {
           ),
           onChanged: (String? newSearchTerm) {
             if (newSearchTerm != null) {
-              context.read<TodoSearch>().setSearchTerm(newSearchTerm);
+              debounce.run(() {
+                context.read<TodoSearch>().setSearchTerm(newSearchTerm);
+              });
             }
           },
         ),
@@ -279,10 +284,12 @@ class _TodoItemState extends State<TodoItem> {
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          _error = textEditingController.text.isEmpty ? true : false;
+                          _error =
+                              textEditingController.text.isEmpty ? true : false;
 
                           if (!_error) {
-                            context.read<TodoList>().editTodo(widget.todo.id, textEditingController.text);
+                            context.read<TodoList>().editTodo(
+                                widget.todo.id, textEditingController.text);
                             Navigator.pop(context);
                           }
                         });
