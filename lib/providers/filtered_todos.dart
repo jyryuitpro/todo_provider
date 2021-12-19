@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:todo_provider/models/todo_model.dart';
+import 'package:todo_provider/providers/providers.dart';
 import 'package:todo_provider/providers/todo_filter.dart';
 import 'package:todo_provider/providers/todo_list.dart';
 import 'package:todo_provider/providers/todo_search.dart';
@@ -32,7 +33,17 @@ class FilteredTodosState extends Equatable {
 }
 
 class FilteredTodos with ChangeNotifier {
-  FilteredTodosState _state = FilteredTodosState.initial();
+  late FilteredTodosState _state;
+  final List<Todo> initialFilteredTodos;
+
+  FilteredTodos({
+    required this.initialFilteredTodos,
+  }) {
+    print('initialFilteredTodos: $initialFilteredTodos');
+    _state = FilteredTodosState(filteredTodos: initialFilteredTodos);
+  }
+
+  // FilteredTodosState _state = FilteredTodosState.initial();
 
   FilteredTodosState get state => _state;
 
@@ -68,4 +79,5 @@ class FilteredTodos with ChangeNotifier {
     _state = _state.copyWith(filteredTodos: _filteredTodos);
     notifyListeners();
   }
+
 }
